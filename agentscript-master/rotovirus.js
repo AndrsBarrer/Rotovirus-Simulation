@@ -3,22 +3,35 @@ import Model from "./agentscript-master/src/Model.js";
 import * as util from "./agentscript-master/src/utils.js";
 
 export default class RotovirusModel extends Model {
-  population = 500; // How many people are moving around in the space
-  speed = 1.0; // The speed that they should move at
-  infected = 1; // Starting amount of infected
+  population = 100; // How many people are moving around in the space
+  speed = 0.6; // The speed that they should move at
+  infected = 10; // Starting amount of infected
   vision = 1; // The radius of infection in patches
-  infectionProbability = 10; // Probability of getting infected when coming into close contact (0-100%)
+  infectionProbability = 70; // Probability of getting infected when coming into close contact (0-100%)
 
   infectedTicksDuration = 100; // How long a turtle should be infected for
   resistantTicksDuration = 80; // How long a turtle should be resistant for
 
+  /* 
+  add random number of someone that is more resistant than the rest
+  add structures like roads and houses or something
+  add an easier way of changing parameters (visually like netlogo)
+  add deaths (look up probability of death for rotovirus)
+  */
   setup() {
     // Set a default value shared by all Agents in this AgentSet
     this.turtles.setDefault("state", "healthy"); // all are healthy to begin
     // this.setupPatches(); // comment out for now, dont know what to do with this
     this.setupTurtles();
+
+    this.explainModel();
   }
 
+  explainModel() {
+    console.log("The population starts with " + this.population + " people.\n" +
+              (this.population - this.infected) + " are healthy and " + this.infected + " are infected.\n" +
+              "The probability of infection is " + this.infectionProbability + "%.\n");
+  }
   // I honestly don't know what this does
   constructor(worldOptions = World.defaultOptions(40)) {
     super(worldOptions);
@@ -42,6 +55,7 @@ export default class RotovirusModel extends Model {
       turtle.state = "healthy"; // make all turtles healthy to start
       turtle.resistantTicksTotal = 0;
       turtle.infectedTicksTotal = 0;
+      turtle.deathProbability = 10; // Sometimes the death probability is higher in some people
     });
 
     // Now create the infected turtles
@@ -82,7 +96,6 @@ export default class RotovirusModel extends Model {
 
       if (luck <= this.infectionProbability) {
         turtle.state = "infected"; // Spread infection
-        console.log("A turtle has been infected...");
       }
     }
 
@@ -90,11 +103,13 @@ export default class RotovirusModel extends Model {
     if (turtle.state === "infected") {
       turtle.infectedTicksTotal++;
 
-      console.log(this.infectedTicksDuration, turtle.infectedTicksTotal, "\n");
       if (this.infectedTicksDuration <= turtle.infectedTicksTotal) {
         turtle.state = "healthy";
         turtle.infectedTicksTotal = 0;
       }
+
+      // Roll the dice on whether they should live or not
+      
     }
   }
 
