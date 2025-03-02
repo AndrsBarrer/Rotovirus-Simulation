@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted, watch, toRefs } from 'vue'
-import Animator from 'https://code.agentscript.org/src/Animator.js'
-import TwoDraw from 'https://code.agentscript.org/src/TwoDraw.js'
+// import Animator from 'https://code.agentscript.org/src/Animator.js'
+import Animator from '../agentscript-master/src/Animator.js'
+// import TwoDraw from 'https://code.agentscript.org/src/TwoDraw.js'
+import TwoDraw from '../agentscript-master/src/TwoDraw.js'
 import RotavirusModel from '../agentscript-master/rotavirus.js'
 
 // Define props
@@ -22,10 +24,14 @@ const props = defineProps({
     type: Number,
     default: 0.6,
   },
+  mortality: {
+    type: Number,
+    default: 10,
+  },
 })
 
 // Extract as a ref to make it reactive
-const { population, infected, infectionProbability, speed } = toRefs(props)
+const { population, infected, infectionProbability, speed, mortality } = toRefs(props)
 
 // References to store model and animator
 const model = ref(null)
@@ -38,7 +44,7 @@ watch(population, (newValue) => {
   if (model.value) {
     // Population changes require resetting the model
     needsReset.value = true
-    console.log(`Population will be updated to: ${newValue} on next reset`)
+    // console.log(`Population will be updated to: ${newValue} on next reset`)
   }
 })
 
@@ -47,7 +53,7 @@ watch(infected, (newValue) => {
   if (model.value) {
     // Population changes require resetting the model
     needsReset.value = true
-    console.log(`Population will be updated to: ${newValue} on next reset`)
+    // console.log(`Population will be updated to: ${newValue} on next reset`)
   }
 })
 
@@ -56,7 +62,7 @@ watch(infectionProbability, (newValue) => {
   if (model.value) {
     // Population changes require resetting the model
     needsReset.value = true
-    console.log(`Population will be updated to: ${newValue} on next reset`)
+    // console.log(`Population will be updated to: ${newValue} on next reset`)
   }
 })
 
@@ -65,7 +71,16 @@ watch(speed, (newValue) => {
   if (model.value) {
     // Population changes require resetting the model
     needsReset.value = true
-    console.log(`Population will be updated to: ${newValue} on next reset`)
+    // console.log(`Population will be updated to: ${newValue} on next reset`)
+  }
+})
+
+// Watch for changes in population
+watch(mortality, (newValue) => {
+  if (model.value) {
+    // Population changes require resetting the model
+    needsReset.value = true
+    // console.log(`Population will be updated to: ${newValue} on next reset`)
   }
 })
 
@@ -87,6 +102,7 @@ const resetModel = () => {
   model.value.infected = infected.value
   model.value.infectionProbability = infectionProbability.value
   model.value.speed = speed.value
+  model.value.mortality = mortality.value
 
   // Setup the model
   model.value.setup()
@@ -94,7 +110,7 @@ const resetModel = () => {
   // Create new view
   view.value = new TwoDraw(model.value, {
     div: 'modelDiv',
-    patchSize: 10,
+    patchSize: 8,
     drawOptions: {
       patchesColor: 'black',
       turtlesColor: (turtle) => {
@@ -111,7 +127,7 @@ const resetModel = () => {
             return 'blue'
         }
       },
-      turtlesSize: 2,
+      turtlesSize: 1,
       turtlesShape: 'dart',
     },
   })
@@ -146,50 +162,3 @@ onMounted(async () => {
 </template>
 
 <style scoped></style>
-<!-- <script setup>
-import { ref, onMounted, watch } from 'vue'
-import Animator from 'https://code.agentscript.org/src/Animator.js'
-import TwoDraw from 'https://code.agentscript.org/src/TwoDraw.js'
-import RotavirusModel from '../agentscript-master/Rotavirus.js'
-
-onMounted(async () => {
-  const model = new RotavirusModel()
-  model.setup()
-
-  const turtleColors = {
-    healthy: 'blue',
-    infected: 'red',
-    resistant: 'gray',
-    vaccinated: 'blue',
-  }
-
-  const view = new TwoDraw(model, {
-    div: 'modelDiv',
-    patchSize: 10,
-    drawOptions: {
-      patchesColor: 'black',
-      turtlesColor: (turtle) => turtleColors[turtle.state],
-      turtlesSize: 2,
-      turtlesShape: 'dart',
-    },
-  })
-
-  const anim = new Animator(
-    () => {
-      model.step()
-      view.draw()
-    },
-    -1, // how many steps
-    30, // at fps steps/second
-  )
-})
-</script>
-
-<template>
-  <div>
-    <h2>Rotavirus Simulation</h2>
-    <div id="modelDiv"></div>
-  </div>
-</template>
-
-<style scoped></style> -->

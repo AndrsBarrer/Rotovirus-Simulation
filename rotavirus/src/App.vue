@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import RotavirusSimulation from './components/RotavirusSimulation.vue'
 import Slider from 'primevue/slider'
 import InputText from 'primevue/inputtext'
@@ -8,6 +8,7 @@ const population = ref(100)
 const infected = ref(10)
 const infectionProbability = ref(10)
 const speed = ref(0.5)
+const mortality = ref(10)
 </script>
 
 <template>
@@ -19,6 +20,7 @@ const speed = ref(0.5)
           :infected="infected"
           :infectionProbability="infectionProbability"
           :speed="speed"
+          :mortality="mortality"
         />
       </div>
 
@@ -27,7 +29,7 @@ const speed = ref(0.5)
           <div class="settings-control">
             <h2>Population</h2>
             <InputText v-model.number="population" class="w-full mb-4" />
-            <Slider v-model="population" :max="500" class="w-full" />
+            <Slider v-model="population" :max="1000" class="w-full" />
           </div>
         </div>
 
@@ -52,6 +54,14 @@ const speed = ref(0.5)
             <h2>Speed</h2>
             <InputText v-model.number="speed" class="w-full mb-4" />
             <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="settings-control">
+            <h2>Mortality Probability</h2>
+            <InputText v-model.number="mortality" class="w-full mb-4" />
+            <Slider v-model="mortality" :step="1" :max="100" class="w-full" />
           </div>
         </div>
       </div>
