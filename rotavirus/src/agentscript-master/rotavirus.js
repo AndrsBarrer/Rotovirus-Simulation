@@ -9,8 +9,8 @@ export default class RotavirusModel extends Model {
   vision = 1 // The radius of infection in patches
   // infectionProbability = 70 // Probability of getting infected when coming into close contact (0-100%)
 
-  infectedTicksDuration = 100 // How long a turtle should be infected for
-  resistantTicksDuration = 80 // How long a turtle should be resistant for
+  // infectedTicksDuration = 100 // How long a turtle should be infected for
+  // resistantTicksDuration = 80 // How long a turtle should be resistant for
 
   /*
   add random number of someone that is more resistant than the rest         (TODO)
@@ -46,13 +46,10 @@ export default class RotavirusModel extends Model {
       p.isRoad = false
     })
 
-    // Create vertical roads
     offsets.forEach((offset) => {
+      // Create vertical roads
       this.patches.patchRectXY(centerX + offset, centerY, 3, 50).ask((p) => (p.isRoad = true))
-    })
-
-    // Create horizontal roads
-    offsets.forEach((offset) => {
+      // Create horizontal roads
       this.patches.patchRectXY(centerX, centerY + offset, 50, 3).ask((p) => (p.isRoad = true))
     })
   }
@@ -60,25 +57,22 @@ export default class RotavirusModel extends Model {
   setupTurtles() {
     // Create all healthy turtles first
     this.turtles.create(this.population - this.infected, (turtle) => {
-      // const [x, y] = this.world.randomPoint()
-      // turtle.setxy(x, y) // Assign the random coordinates
       let roadPatch = this.patches.with((p) => p.isRoad).oneOf()
       turtle.setxy(roadPatch.x, roadPatch.y) // Start turtles on roads
       turtle.state = 'healthy' // make all turtles healthy to start
-      turtle.resistantTicksTotal = 0
-      turtle.infectedTicksTotal = 0
+      turtle.resistantTicksCount = 0
+      turtle.infectedTicksCount = 0
       turtle.deathProbability = 10 // Sometimes the death probability is higher in some people
     })
 
     // Now create the infected turtles
     this.turtles.create(this.infected, (turtle) => {
-      // const [x, y] = this.world.randomPoint()
-      // turtle.setxy(x, y) // Assign the random coordinates
       let roadPatch = this.patches.with((p) => p.isRoad).oneOf()
       turtle.setxy(roadPatch.x, roadPatch.y) // Start turtles on roads
-      turtle.state = 'infected' // make all turtles healthy to start
-      turtle.resistantTicksTotal = 0
-      turtle.infectedTicksTotal = 0
+      turtle.state = 'infected' // infect some of the turtles
+      turtle.resistantTicksCount = 0 // ticks get incremented for every turtle until the max ticks is reached
+      turtle.infectedTicksCount = 0
+      turtle.deathProbability = 10 // Sometimes the death probability is higher in some people
     })
   }
 
@@ -115,20 +109,20 @@ export default class RotavirusModel extends Model {
 
     // If the turtle is infected, update how long they should be infected for
     if (turtle.state === 'infected') {
-      turtle.infectedTicksTotal++
+      turtle.infectedTicksCount++
 
       // take into consideration ticks,
       // when they reach the max amount of ticks,
       // roll the dice on if they live or not
       const mortalityRoll = Math.floor(Math.random() * 100 + 1)
 
-      if (this.infectedTicksDuration <= turtle.infectedTicksTotal) {
+      if (this.infectedTicksDuration <= turtle.infectedTicksCount) {
         if (mortalityRoll <= this.mortality) {
           //console.log('died')
           this.turtles.remove(turtle)
         }
         turtle.state = 'healthy'
-        turtle.infectedTicksTotal = 0
+        turtle.infectedTicksCount = 0
       }
     }
   }

@@ -9,6 +9,8 @@ const infected = ref(10)
 const infectionProbability = ref(10)
 const speed = ref(0.5)
 const mortality = ref(10)
+const infectedTicksDuration = ref(100)
+const resistantTicksDuration = ref(80)
 </script>
 
 <template>
@@ -21,6 +23,8 @@ const mortality = ref(10)
           :infectionProbability="infectionProbability"
           :speed="speed"
           :mortality="mortality"
+          :infectedTicksDuration="infectedTicksDuration"
+          :resistantTicksDuration="resistantTicksDuration"
         />
       </div>
 
@@ -62,6 +66,22 @@ const mortality = ref(10)
             <h2>Mortality Probability</h2>
             <InputText v-model.number="mortality" class="w-full mb-4" />
             <Slider v-model="mortality" :step="1" :max="100" class="w-full" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="settings-control">
+            <h2>Infected Ticks</h2>
+            <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
+            <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="settings-control">
+            <h2>Resistant Ticks</h2>
+            <InputText v-model.number="resistantTicksDuration" class="w-full mb-4" />
+            <Slider v-model="resistantTicksDuration" :step="1" :max="1000" class="w-full" />
           </div>
         </div>
       </div>

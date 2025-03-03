@@ -1,8 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, toRefs } from 'vue'
-// import Animator from 'https://code.agentscript.org/src/Animator.js'
 import Animator from '../agentscript-master/src/Animator.js'
-// import TwoDraw from 'https://code.agentscript.org/src/TwoDraw.js'
 import TwoDraw from '../agentscript-master/src/TwoDraw.js'
 import RotavirusModel from '../agentscript-master/rotavirus.js'
 
@@ -28,10 +26,26 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  infectedTicksDuration: {
+    type: Number,
+    default: 100,
+  },
+  resistantTicksDuration: {
+    type: Number,
+    default: 80,
+  },
 })
 
 // Extract as a ref to make it reactive
-const { population, infected, infectionProbability, speed, mortality } = toRefs(props)
+const {
+  population,
+  infected,
+  infectionProbability,
+  speed,
+  mortality,
+  infectedTicksDuration,
+  resistantTicksDuration,
+} = toRefs(props)
 
 // References to store model and animator
 const model = ref(null)
@@ -84,6 +98,24 @@ watch(mortality, (newValue) => {
   }
 })
 
+// Watch for changes in population
+watch(infectedTicksDuration, (newValue) => {
+  if (model.value) {
+    // Population changes require resetting the model
+    needsReset.value = true
+    // console.log(`Population will be updated to: ${newValue} on next reset`)
+  }
+})
+
+// Watch for changes in population
+watch(resistantTicksDuration, (newValue) => {
+  if (model.value) {
+    // Population changes require resetting the model
+    needsReset.value = true
+    // console.log(`Population will be updated to: ${newValue} on next reset`)
+  }
+})
+
 // Function to reset and recreate the model
 const resetModel = () => {
   if (anim.value) {
@@ -103,6 +135,8 @@ const resetModel = () => {
   model.value.infectionProbability = infectionProbability.value
   model.value.speed = speed.value
   model.value.mortality = mortality.value
+  model.value.infectedTicksDuration = infectedTicksDuration.value
+  model.value.resistantTicksDuration = resistantTicksDuration.value
 
   // Setup the model
   model.value.setup()
@@ -127,7 +161,7 @@ const resetModel = () => {
             return 'blue'
         }
       },
-      turtlesSize: 1,
+      turtlesSize: 2,
       turtlesShape: 'dart',
     },
   })
@@ -145,7 +179,7 @@ const resetModel = () => {
       }
     },
     -1, // how many steps
-    30, // at fps steps/second
+    60, // at fps steps/second
   )
 }
 
@@ -157,6 +191,7 @@ onMounted(async () => {
 <template>
   <div>
     <h2>Rotavirus Simulation</h2>
+    <h3>(60 ticks = 1 second)</h3>
     <div id="modelDiv"></div>
   </div>
 </template>
