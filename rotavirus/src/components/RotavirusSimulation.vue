@@ -28,11 +28,11 @@ const props = defineProps({
   },
   infectedTicksDuration: {
     type: Number,
-    default: 100,
+    default: 300, // resistant for 5 seconds
   },
   resistantTicksDuration: {
     type: Number,
-    default: 80,
+    default: 600, // resistant for 10 seconds
   },
 })
 
@@ -156,7 +156,7 @@ const resetModel = () => {
           case 'resistant':
             return 'gray'
           case 'vaccinated':
-            return 'blue'
+            return 'yellow'
           default:
             return 'blue'
         }

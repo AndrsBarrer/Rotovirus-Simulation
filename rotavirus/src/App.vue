@@ -9,8 +9,8 @@ const infected = ref(10)
 const infectionProbability = ref(10)
 const speed = ref(0.5)
 const mortality = ref(10)
-const infectedTicksDuration = ref(100)
-const resistantTicksDuration = ref(80)
+const infectedTicksDuration = ref(300)
+const resistantTicksDuration = ref(600)
 </script>
 
 <template>
