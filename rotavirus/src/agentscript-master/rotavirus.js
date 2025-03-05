@@ -3,9 +3,10 @@ import Model from './src/Model.js'
 
 export default class RotavirusModel extends Model {
   vision = 1 // The radius of infection in patches
-  vaccinationProbability = 0
+  vaccinationProbability = 25
   vaccinatedTicksDuration = 100
-
+  probMovingWhenSick = 25
+  resistantTicksDuration = 300
   /*
   add random number of someone that is more resistant than the rest         (TODO)
   add structures like roads and houses or something                         (DONE ? added roads)
@@ -49,13 +50,13 @@ export default class RotavirusModel extends Model {
     // Create all healthy turtles first
     this.turtles.create(this.population - this.infected, (turtle) => {
       this.setupDefaultValues(turtle)
-      turtle.state = 'healthy' // make all turtles healthy to start
+      this.makeHealthy(turtle)
     })
 
     // Now create the infected turtles
     this.turtles.create(this.infected, (turtle) => {
       this.setupDefaultValues(turtle)
-      turtle.state = 'infected' // infect some of the turtles
+      this.makeInfected(turtle)
     })
   }
 
@@ -86,7 +87,7 @@ export default class RotavirusModel extends Model {
         if (mortalityRoll <= this.mortality) {
           this.finishHim(turtle) // FATALITY, rotovirus wins
         }
-        this.makeHealthy(turtle)
+        this.makeResistant(turtle)
       }
     }
 
@@ -111,6 +112,13 @@ export default class RotavirusModel extends Model {
       }
       turtle.vaccinatedTicksCount++
     }
+
+    if (turtle.state === 'resistant') {
+      // Exceeded how long someone can be resistant for
+      if (turtle.resistantTicksCount++ === this.resistantTicksDuration) {
+        this.makeHealthy(turtle)
+      }
+    }
   }
 
   getNearbyInfected(turtle) {
@@ -121,19 +129,21 @@ export default class RotavirusModel extends Model {
 
   move(turtle) {
     let nextPatch = turtle.patchAhead(1) // Look at the patch ahead
-    if (nextPatch && nextPatch.isRoad) {
-      turtle.forward(this.speed) // Move forward only if it's a road
-    } else {
-      turtle.right(90) // Turn if there's no road
-    }
-  }
 
-  // Sets the state of the turtle to healthy, along with the rest of its internal variables
-  makeHealthy(turtle) {
-    turtle.state = 'healthy' // infect some of the turtles
-    turtle.infectedTicksCount = 0
-    turtle.healthyTicksCount = 0
-    turtle.vaccinatedTicksCount = 0
+    // Every 10 ticks evaluate if they should move
+    if (turtle.state === 'infected') {
+      if (turtle.infectedTicksCount % 60 === 0) {
+        turtle.shouldMove = this.spinRoulette() > this.probMovingWhenSick ? true : false // fix this later so its not hardcoded
+      }
+    }
+
+    if (turtle.shouldMove) {
+      if (nextPatch && nextPatch.isRoad) {
+        turtle.forward(turtle.speed) // Move forward only if it's a road
+      } else {
+        turtle.right(90) // Turn if there's no road
+      }
+    }
   }
 
   infectIfExposed(turtle) {
@@ -149,12 +159,33 @@ export default class RotavirusModel extends Model {
     }
   }
 
+  // Sets the state of the turtle to healthy, along with the rest of its internal variables
+  makeHealthy(turtle) {
+    turtle.state = 'healthy' // infect some of the turtles
+    turtle.infectedTicksCount = 0
+    turtle.healthyTicksCount = 0
+    turtle.vaccinatedTicksCount = 0
+    turtle.speed = 0.5
+    turtle.shouldMove = true
+  }
+
   makeInfected(turtle) {
     turtle.state = 'infected' // Spread infection
+    turtle.speed = 0.2 // Reduction in 25% of their original speed
+    turtle.shouldMove = true
   }
 
   makeVaccinated(turtle) {
     turtle.state = 'vaccinated'
+  }
+
+  makeResistant(turtle) {
+    turtle.state = 'resistant'
+    turtle.infectedTicksCount = 0
+    turtle.healthyTicksCount = 0
+    turtle.vaccinatedTicksCount = 0
+    turtle.speed = 0.5
+    turtle.shouldMove = true
   }
 
   finishHim(turtle) {

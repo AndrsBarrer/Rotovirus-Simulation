@@ -154,7 +154,7 @@ const resetModel = () => {
           case 'infected':
             return 'red'
           case 'resistant':
-            return 'gray'
+            return 'white'
           case 'vaccinated':
             return 'yellow'
           default:
