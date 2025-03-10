@@ -11,6 +11,9 @@ const speed = ref(0.5)
 const mortality = ref(10)
 const infectedTicksDuration = ref(300)
 const resistantTicksDuration = ref(600)
+const vaccinationProbability = ref(25)
+const vaccinatedTicksDuration = ref(20)
+const probStillWhenSick = ref(20)
 </script>
 
 <template>
@@ -25,7 +28,16 @@ const resistantTicksDuration = ref(600)
           :mortality="mortality"
           :infectedTicksDuration="infectedTicksDuration"
           :resistantTicksDuration="resistantTicksDuration"
+          :vaccinationProbability="vaccinationProbability"
+          :vaccinatedTicksDuration="vaccinatedTicksDuration"
+          :probStillWhenSick="probStillWhenSick"
         />
+        <h3>
+          Rotavirus is a highly contagious virus that primarily affects infants and young children,
+          causing severe diarrhea, vomiting, fever, and abdominal pain. Symptoms usually appear
+          within two days of infection and can lead to dehydration, which can be dangerous if not
+          treated. Vaccination is available and effective in preventing severe rotavirus infections.
+        </h3>
       </div>
 
       <div class="column settings-column">
@@ -63,12 +75,14 @@ const resistantTicksDuration = ref(600)
 
         <div class="row">
           <div class="settings-control">
-            <h2>Mortality Probability</h2>
+            <h2>Mortality Prob.</h2>
             <InputText v-model.number="mortality" class="w-full mb-4" />
             <Slider v-model="mortality" :step="1" :max="100" class="w-full" />
           </div>
         </div>
+      </div>
 
+      <div class="column settings-column">
         <div class="row">
           <div class="settings-control">
             <h2>Infected Ticks</h2>
@@ -84,6 +98,29 @@ const resistantTicksDuration = ref(600)
             <Slider v-model="resistantTicksDuration" :step="1" :max="1000" class="w-full" />
           </div>
         </div>
+        <div class="row">
+          <div class="settings-control">
+            <h2>Vaccination Prob.</h2>
+            <InputText v-model.number="vaccinationProbability" class="w-full mb-4" />
+            <Slider v-model="vaccinationProbability" :step="1" :max="100" class="w-full" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="settings-control">
+            <h2>Vax Ticks Duration</h2>
+            <InputText v-model.number="vaccinatedTicksDuration" class="w-full mb-4" />
+            <Slider v-model="vaccinatedTicksDuration" :step="1" :max="1000" class="w-full" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="settings-control">
+            <h2>Immobility when Sick Prob.</h2>
+            <InputText v-model.number="probStillWhenSick" class="w-full mb-4" />
+            <Slider v-model="probStillWhenSick" :step="1" :max="100" class="w-full" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -93,7 +130,7 @@ const resistantTicksDuration = ref(600)
 .main-body {
   color: white;
   min-height: 100vh;
-  padding: 0 2rem;
+  padding: 2rem 2rem;
 }
 
 /* Row container */
@@ -119,8 +156,8 @@ const resistantTicksDuration = ref(600)
 }
 
 .settings-control {
-  min-width: 20rem; /* Maybe try to fix this so that the value isnt so high */
-  margin-top: 1rem;
+  min-width: 20rem;
+  margin-top: 2rem;
 }
 
 /* Input styling */
@@ -133,13 +170,6 @@ const resistantTicksDuration = ref(600)
 }
 :deep(.p-slider-handle) {
   background-color: #fff;
-}
-
-/* Ensure the model div has proper dimensions */
-:deep(#modelDiv) {
-  width: 100%;
-  height: 100%;
-  min-height: 500px;
 }
 
 /* Responsive adjustments */

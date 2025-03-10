@@ -3,10 +3,6 @@ import Model from './src/Model.js'
 
 export default class RotavirusModel extends Model {
   vision = 1 // The radius of infection in patches
-  vaccinationProbability = 25
-  vaccinatedTicksDuration = 100
-  probMovingWhenSick = 25
-  resistantTicksDuration = 300
   /*
   add random number of someone that is more resistant than the rest         (TODO)
   add structures like roads and houses or something                         (DONE ? added roads)
@@ -133,15 +129,15 @@ export default class RotavirusModel extends Model {
     // Every 10 ticks evaluate if they should move
     if (turtle.state === 'infected') {
       if (turtle.infectedTicksCount % 60 === 0) {
-        turtle.shouldMove = this.spinRoulette() > this.probMovingWhenSick ? true : false // fix this later so its not hardcoded
+        turtle.shouldMove = this.spinRoulette() > this.probStillWhenSick ? true : false
       }
     }
 
     if (turtle.shouldMove) {
       if (nextPatch && nextPatch.isRoad) {
-        turtle.forward(turtle.speed) // Move forward only if it's a road
+        turtle.forward(turtle.state === 'infected' ? this.speed * 0.25 : this.speed) // Move forward only if it's a road
       } else {
-        turtle.right(90) // Turn if there's no road
+        turtle.right(75) // Turn if there's no road
       }
     }
   }
@@ -165,13 +161,13 @@ export default class RotavirusModel extends Model {
     turtle.infectedTicksCount = 0
     turtle.healthyTicksCount = 0
     turtle.vaccinatedTicksCount = 0
-    turtle.speed = 0.5
+    //turtle.speed = 0.5
     turtle.shouldMove = true
   }
 
   makeInfected(turtle) {
     turtle.state = 'infected' // Spread infection
-    turtle.speed = 0.2 // Reduction in 25% of their original speed
+    //turtle.speed = 0.2 // Reduction in 25% of their original speed
     turtle.shouldMove = true
   }
 
@@ -184,7 +180,7 @@ export default class RotavirusModel extends Model {
     turtle.infectedTicksCount = 0
     turtle.healthyTicksCount = 0
     turtle.vaccinatedTicksCount = 0
-    turtle.speed = 0.5
+    //turtle.speed = 0.5
     turtle.shouldMove = true
   }
 
@@ -204,6 +200,6 @@ export default class RotavirusModel extends Model {
     turtle.resistantTicksCount = 0
     turtle.infectedTicksCount = 0
     turtle.vaccinatedTicksCount = 0
-    turtle.deathProbability = 10 // Sometimes the death probability is higher in some people
+    turtle.deathProbability = 10
   }
 }

@@ -34,86 +34,34 @@ const props = defineProps({
     type: Number,
     default: 600, // resistant for 10 seconds
   },
+  vaccinationProbability: {
+    type: Number,
+    default: 25,
+  },
+  vaccinatedTicksDuration: {
+    type: Number,
+    default: 180,
+  },
+  probStillWhenSick: {
+    type: Number,
+    default: 25,
+  },
 })
 
-// Extract as a ref to make it reactive
-const {
-  population,
-  infected,
-  infectionProbability,
-  speed,
-  mortality,
-  infectedTicksDuration,
-  resistantTicksDuration,
-} = toRefs(props)
+// Convert props to reactive refs
+const refs = toRefs(props)
 
-// References to store model and animator
+// References for model and animator
 const model = ref(null)
 const view = ref(null)
 const anim = ref(null)
 const needsReset = ref(false)
 
-// Watch for changes in population
-watch(population, (newValue) => {
-  if (model.value) {
-    // Population changes require resetting the model
-    needsReset.value = true
-    // console.log(`Population will be updated to: ${newValue} on next reset`)
-  }
-})
-
-// Watch for changes in population
-watch(infected, (newValue) => {
-  if (model.value) {
-    // Population changes require resetting the model
-    needsReset.value = true
-    // console.log(`Population will be updated to: ${newValue} on next reset`)
-  }
-})
-
-// Watch for changes in population
-watch(infectionProbability, (newValue) => {
-  if (model.value) {
-    // Population changes require resetting the model
-    needsReset.value = true
-    // console.log(`Population will be updated to: ${newValue} on next reset`)
-  }
-})
-
-// Watch for changes in population
-watch(speed, (newValue) => {
-  if (model.value) {
-    // Population changes require resetting the model
-    needsReset.value = true
-    // console.log(`Population will be updated to: ${newValue} on next reset`)
-  }
-})
-
-// Watch for changes in population
-watch(mortality, (newValue) => {
-  if (model.value) {
-    // Population changes require resetting the model
-    needsReset.value = true
-    // console.log(`Population will be updated to: ${newValue} on next reset`)
-  }
-})
-
-// Watch for changes in population
-watch(infectedTicksDuration, (newValue) => {
-  if (model.value) {
-    // Population changes require resetting the model
-    needsReset.value = true
-    // console.log(`Population will be updated to: ${newValue} on next reset`)
-  }
-})
-
-// Watch for changes in population
-watch(resistantTicksDuration, (newValue) => {
-  if (model.value) {
-    // Population changes require resetting the model
-    needsReset.value = true
-    // console.log(`Population will be updated to: ${newValue} on next reset`)
-  }
+// Watch all relevant props and trigger reset when necessary
+Object.values(refs).forEach((dep) => {
+  watch(dep, () => {
+    if (model.value) needsReset.value = true
+  })
 })
 
 // Function to reset and recreate the model
@@ -130,13 +78,16 @@ const resetModel = () => {
 
   // Create new model with current parameters
   model.value = new RotavirusModel()
-  model.value.population = population.value
-  model.value.infected = infected.value
-  model.value.infectionProbability = infectionProbability.value
-  model.value.speed = speed.value
-  model.value.mortality = mortality.value
-  model.value.infectedTicksDuration = infectedTicksDuration.value
-  model.value.resistantTicksDuration = resistantTicksDuration.value
+  model.value.population = props.population
+  model.value.infected = props.infected
+  model.value.infectionProbability = props.infectionProbability
+  model.value.speed = props.speed
+  model.value.mortality = props.mortality
+  model.value.infectedTicksDuration = props.infectedTicksDuration
+  model.value.resistantTicksDuration = props.resistantTicksDuration
+  model.value.vaccinationProbability = props.vaccinationProbability
+  model.value.vaccinatedTicksDuration = props.vaccinatedTicksDuration
+  model.value.probStillWhenSick = props.probStillWhenSick
 
   // Setup the model
   model.value.setup()
