@@ -6,7 +6,7 @@ import RotavirusModel from '../agentscript-master/rotavirus.js'
 
 // Define props
 const props = defineProps({
-  population: {
+  healthy: {
     type: Number,
     default: 100,
   },
@@ -46,7 +46,15 @@ const props = defineProps({
     type: Number,
     default: 25,
   },
+  chartData: {
+    type: Object,
+  },
+  needsReset: {
+    type: Boolean,
+  },
 })
+
+const localNeedsReset = ref(props.needsReset || false)
 
 // Convert props to reactive refs
 const refs = toRefs(props)
@@ -55,12 +63,16 @@ const refs = toRefs(props)
 const model = ref(null)
 const view = ref(null)
 const anim = ref(null)
-const needsReset = ref(false)
+
+const emit = defineEmits(['update:needsReset'])
 
 // Watch all relevant props and trigger reset when necessary
 Object.values(refs).forEach((dep) => {
   watch(dep, () => {
-    if (model.value) needsReset.value = true
+    if (model.value) {
+      localNeedsReset.value = true
+      emit('update:needsReset', true)
+    }
   })
 })
 
@@ -78,7 +90,7 @@ const resetModel = () => {
 
   // Create new model with current parameters
   model.value = new RotavirusModel()
-  model.value.population = props.population
+  model.value.healthy = props.healthy
   model.value.infected = props.infected
   model.value.infectionProbability = props.infectionProbability
   model.value.speed = props.speed
@@ -88,6 +100,9 @@ const resetModel = () => {
   model.value.vaccinationProbability = props.vaccinationProbability
   model.value.vaccinatedTicksDuration = props.vaccinatedTicksDuration
   model.value.probStillWhenSick = props.probStillWhenSick
+
+  // Pass the chartData object to be modified and emitted back
+  model.value.chartData = props.chartData
 
   // Setup the model
   model.value.setup()
@@ -124,9 +139,10 @@ const resetModel = () => {
       view.value.draw()
 
       // Check if we need to reset due to parameter changes
-      if (needsReset.value) {
+      if (localNeedsReset.value) {
         resetModel()
-        needsReset.value = false
+        localNeedsReset.value = false
+        emit('update:needsReset', false)
       }
     },
     -1, // how many steps

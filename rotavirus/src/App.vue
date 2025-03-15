@@ -2,9 +2,12 @@
 import RotavirusSimulation from './components/RotavirusSimulation.vue'
 import Slider from 'primevue/slider'
 import InputText from 'primevue/inputtext'
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { Chart } from 'chart.js'
 
-const population = ref(100)
+import { chartData } from './components/virusChart.js'
+
+const healthy = ref(100)
 const infected = ref(10)
 const infectionProbability = ref(10)
 const speed = ref(0.5)
@@ -14,6 +17,111 @@ const resistantTicksDuration = ref(600)
 const vaccinationProbability = ref(25)
 const vaccinatedTicksDuration = ref(20)
 const probStillWhenSick = ref(20)
+const needsReset = ref(false)
+
+let chart: Chart | null = null
+
+onMounted(() => {
+  // Ensure the canvas element exists after the component is mounted
+  const ctx = document.getElementById('stats-chart')
+  if (ctx) {
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        datasets: [
+          {
+            label: 'Population',
+            data: [], // This will store historical values
+            borderColor: 'green',
+            fill: false,
+          },
+          {
+            label: 'Healthy',
+            data: [], // This will store historical values
+            borderColor: 'blue',
+            fill: false,
+          },
+          {
+            label: 'Infected',
+            data: [], // This will store historical values
+            borderColor: 'red',
+            fill: false,
+          },
+          {
+            label: 'Resistant',
+            data: [], // This will store historical values
+            borderColor: 'white',
+            fill: false,
+          },
+          {
+            label: 'Vaccinated',
+            data: [], // This will store historical values
+            borderColor: 'Yellow',
+            fill: false,
+          },
+          {
+            label: 'Deaths',
+            data: [], // This will store historical values
+            borderColor: 'Black',
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            display: false,
+            ticks: {
+              display: false, //this will remove only the label
+            },
+          },
+        },
+        y: { title: { display: true, text: 'Population' } },
+      },
+    })
+  }
+})
+
+// Function to update the chart with a new healthy value
+function updateChart(newChartData, time) {
+  chart.data.labels.push(time) // Add new time label
+  chart.data.datasets[0].data.push(newChartData.population)
+  chart.data.datasets[1].data.push(newChartData.healthy)
+  chart.data.datasets[2].data.push(newChartData.infected)
+  chart.data.datasets[3].data.push(newChartData.resistant)
+  chart.data.datasets[4].data.push(newChartData.vaccinated)
+  chart.data.datasets[5].data.push(newChartData.deaths)
+  chart.update() // Refresh the chart
+}
+
+// Add this function to reset the chart
+function resetChart() {
+  if (chart) {
+    // Clear all datasets
+    chart.data.labels = []
+    chart.data.datasets.forEach((dataset) => {
+      dataset.data = []
+    })
+    chart.update()
+
+    // Reset the needsReset flag
+    needsReset.value = false
+  }
+}
+
+// Add a watcher for the needsReset ref
+watch(needsReset, (newValue) => {
+  console.log('needsReset changed to:', newValue) // Debug
+  if (newValue === true) {
+    resetChart()
+  }
+})
+
+setInterval(() => {
+  const currentTime = new Date().toLocaleTimeString()
+  updateChart(chartData, currentTime)
+}, 500)
 </script>
 
 <template>
@@ -21,7 +129,7 @@ const probStillWhenSick = ref(20)
     <div class="row">
       <div class="column simulation-column">
         <RotavirusSimulation
-          :population="population"
+          :healthy="healthy"
           :infected="infected"
           :infectionProbability="infectionProbability"
           :speed="speed"
@@ -31,6 +139,7 @@ const probStillWhenSick = ref(20)
           :vaccinationProbability="vaccinationProbability"
           :vaccinatedTicksDuration="vaccinatedTicksDuration"
           :probStillWhenSick="probStillWhenSick"
+          @update:needsReset="resetChart"
         />
         <h3>
           Rotavirus is a highly contagious virus that primarily affects infants and young children,
@@ -43,9 +152,9 @@ const probStillWhenSick = ref(20)
       <div class="column settings-column">
         <div class="row">
           <div class="settings-control">
-            <h2>Population</h2>
-            <InputText v-model.number="population" class="w-full mb-4" />
-            <Slider v-model="population" :max="1000" class="w-full" />
+            <h2>Healthy</h2>
+            <InputText v-model.number="healthy" class="w-full mb-4" />
+            <Slider v-model="healthy" :max="1000" class="w-full" />
           </div>
         </div>
 
@@ -123,6 +232,7 @@ const probStillWhenSick = ref(20)
         </div>
       </div>
     </div>
+    <canvas id="stats-chart"></canvas>
   </div>
 </template>
 
