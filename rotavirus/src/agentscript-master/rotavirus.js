@@ -23,6 +23,7 @@ export default class RotavirusModel extends Model {
     this.turtles.setDefault('state', 'healthy') // all are healthy to begin
     this.setupPatches()
     this.setupTurtles()
+    this.resetStatistics()
   }
 
   // I honestly don't know what this does
@@ -140,9 +141,13 @@ export default class RotavirusModel extends Model {
   }
 
   getNearbyInfected(turtle) {
-    return this.turtles
-      .inRadius(turtle, this.vision, false)
+    const nearbyTurtles = this.turtles.inRadius(turtle, this.vision, false)
+
+    const infected = nearbyTurtles
       .filter((t) => t !== turtle && t.state === 'infected')
+      .map((t) => t.state)
+
+    return infected
   }
 
   move(turtle) {
@@ -185,14 +190,16 @@ export default class RotavirusModel extends Model {
     turtle.healthyTicksCount = 0
     turtle.vaccinatedTicksCount = 0
     turtle.resistantTicksCount = 0
-    //turtle.speed = 0.5
     turtle.shouldMove = true
   }
 
   makeInfected(turtle) {
     turtle.state = 'infected' // Spread infection
-    //turtle.speed = 0.2 // Reduction in 25% of their original speed
     turtle.shouldMove = true
+    turtle.infectedTicksCount = 0
+    turtle.healthyTicksCount = 0
+    turtle.vaccinatedTicksCount = 0
+    turtle.resistantTicksCount = 0
   }
 
   makeVaccinated(turtle) {
@@ -210,6 +217,7 @@ export default class RotavirusModel extends Model {
   }
 
   finishHim(turtle) {
+    turtle.state = 'dead'
     this.turtles.remove(turtle)
   }
 
@@ -255,6 +263,10 @@ export default class RotavirusModel extends Model {
     chartData.vaccinated +=
       this.statistics.newHealthyToVaccinated - this.statistics.newVaccinatedToHealthy
 
+    this.resetStatistics()
+  }
+
+  resetStatistics() {
     // Reset statistics for the next batch update
     this.statistics.newHealthyToInfected = 0
     this.statistics.newHealthyToVaccinated = 0

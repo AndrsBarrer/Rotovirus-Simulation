@@ -1,3 +1,13 @@
+<template>
+  <div>
+    <div class="title">
+      <h2 class="">Rotavirus Simulation</h2>
+      <h3>(60 ticks = 1 second)</h3>
+    </div>
+    <div id="modelDiv" height="100px"></div>
+  </div>
+</template>
+
 <script setup>
 import { ref, onMounted, watch, toRefs } from 'vue'
 import Animator from '../agentscript-master/src/Animator.js'
@@ -111,6 +121,8 @@ const resetModel = () => {
   view.value = new TwoDraw(model.value, {
     div: 'modelDiv',
     patchSize: 8,
+    width: 700,
+    height: 700,
     drawOptions: {
       patchesColor: 'black',
       turtlesColor: (turtle) => {
@@ -155,12 +167,17 @@ onMounted(async () => {
 })
 </script>
 
-<template>
-  <div>
-    <h2>Rotavirus Simulation</h2>
-    <h3>(60 ticks = 1 second)</h3>
-    <div id="modelDiv"></div>
-  </div>
-</template>
+<style scoped lang="scss">
+#modelDiv {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 5rem;
+}
 
-<style scoped></style>
+.title {
+  position: absolute;
+  left: 10rem;
+  top: 1rem;
+}
+</style>

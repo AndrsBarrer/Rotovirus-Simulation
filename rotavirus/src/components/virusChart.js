@@ -1,4 +1,3 @@
-// store.js (or a composable)
 import { reactive } from 'vue'
 
 export const chartData = reactive({

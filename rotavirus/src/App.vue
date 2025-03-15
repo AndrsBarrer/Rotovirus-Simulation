@@ -15,7 +15,7 @@ const mortality = ref(10)
 const infectedTicksDuration = ref(300)
 const resistantTicksDuration = ref(600)
 const vaccinationProbability = ref(25)
-const vaccinatedTicksDuration = ref(20)
+const vaccinatedTicksDuration = ref(400)
 const probStillWhenSick = ref(20)
 const needsReset = ref(false)
 
@@ -71,15 +71,20 @@ onMounted(() => {
         responsive: true,
         scales: {
           x: {
-            display: false,
             ticks: {
-              display: false, //this will remove only the label
+              display: false,
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Population',
             },
           },
         },
-        y: { title: { display: true, text: 'Population' } },
       },
     })
+    ctx.style.backgroundColor = 'rgba(160,160,160,0.1)'
   }
 })
 
@@ -123,12 +128,12 @@ setInterval(() => {
   updateChart(chartData, currentTime)
 }, 500)
 </script>
-
 <template>
   <div class="main-body">
     <div class="row">
       <div class="column simulation-column">
         <RotavirusSimulation
+          class="simulation"
           :healthy="healthy"
           :infected="infected"
           :infectionProbability="infectionProbability"
@@ -141,7 +146,7 @@ setInterval(() => {
           :probStillWhenSick="probStillWhenSick"
           @update:needsReset="resetChart"
         />
-        <h3>
+        <h3 class="description">
           Rotavirus is a highly contagious virus that primarily affects infants and young children,
           causing severe diarrhea, vomiting, fever, and abdominal pain. Symptoms usually appear
           within two days of infection and can lead to dehydration, which can be dangerous if not
@@ -160,25 +165,19 @@ setInterval(() => {
 
         <div class="row">
           <div class="settings-control">
-            <h2>Infected</h2>
-            <InputText v-model.number="infected" class="w-full mb-4" />
-            <Slider v-model="infected" :max="500" class="w-full" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="settings-control">
-            <h2>Probability of Infection</h2>
-            <InputText v-model.number="infectionProbability" class="w-full mb-4" />
-            <Slider v-model="infectionProbability" :max="100" class="w-full" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="settings-control">
             <h2>Speed</h2>
             <InputText v-model.number="speed" class="w-full mb-4" />
             <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
+          </div>
+        </div>
+      </div>
+
+      <div class="column settings-column">
+        <div class="row">
+          <div class="settings-control">
+            <h2>Infected</h2>
+            <InputText v-model.number="infected" class="w-full mb-4" />
+            <Slider v-model="infected" :max="500" class="w-full" />
           </div>
         </div>
 
@@ -194,9 +193,9 @@ setInterval(() => {
       <div class="column settings-column">
         <div class="row">
           <div class="settings-control">
-            <h2>Infected Ticks</h2>
-            <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
-            <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
+            <h2>Prob. of Infection</h2>
+            <InputText v-model.number="infectionProbability" class="w-full mb-4" />
+            <Slider v-model="infectionProbability" :max="100" class="w-full" />
           </div>
         </div>
 
@@ -207,6 +206,17 @@ setInterval(() => {
             <Slider v-model="resistantTicksDuration" :step="1" :max="1000" class="w-full" />
           </div>
         </div>
+      </div>
+
+      <div class="column settings-column">
+        <div class="row">
+          <div class="settings-control">
+            <h2>Infected Ticks</h2>
+            <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
+            <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
+          </div>
+        </div>
+
         <div class="row">
           <div class="settings-control">
             <h2>Vaccination Prob.</h2>
@@ -214,7 +224,9 @@ setInterval(() => {
             <Slider v-model="vaccinationProbability" :step="1" :max="100" class="w-full" />
           </div>
         </div>
+      </div>
 
+      <div class="column settings-column">
         <div class="row">
           <div class="settings-control">
             <h2>Vax Ticks Duration</h2>
@@ -225,7 +237,7 @@ setInterval(() => {
 
         <div class="row">
           <div class="settings-control">
-            <h2>Immobility when Sick Prob.</h2>
+            <h2>Immobility w/ Sick</h2>
             <InputText v-model.number="probStillWhenSick" class="w-full mb-4" />
             <Slider v-model="probStillWhenSick" :step="1" :max="100" class="w-full" />
           </div>
@@ -241,8 +253,28 @@ setInterval(() => {
   color: white;
   min-height: 100vh;
   padding: 2rem 2rem;
+
+  #stats-chart {
+    position: absolute;
+    right: 6rem;
+    bottom: 2rem;
+    max-height: 35rem;
+    max-width: 70rem;
+  }
 }
 
+.simulation {
+  margin-right: 23rem;
+}
+
+.description {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  max-width: 45rem;
+  margin-left: 5rem;
+  margin-bottom: 4rem;
+}
 /* Row container */
 .row {
   display: flex;
@@ -256,17 +288,13 @@ setInterval(() => {
   flex: 1;
 }
 
-.simulation-column {
-  flex: 3; /* Make simulation take more space */
-}
-
 .settings-column {
   flex: 1; /* Settings take less space */
   padding-top: 2rem;
 }
 
 .settings-control {
-  min-width: 20rem;
+  min-width: 12rem;
   margin-top: 2rem;
 }
 
@@ -282,7 +310,7 @@ setInterval(() => {
   background-color: #fff;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments*/
 @media (max-width: 768px) {
   .row {
     flex-direction: column;
