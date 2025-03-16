@@ -1,3 +1,113 @@
+<template>
+  <div class="main-container">
+    <div class="simulation-description">
+      <div class="title">
+        <h2 class="">Rotavirus Simulation</h2>
+        <h3>(60 ticks = 1 second)</h3>
+      </div>
+      <div class="simulation">
+        <RotavirusSimulation
+          class="simulation"
+          :healthy="healthy"
+          :infected="infected"
+          :infectionProbability="infectionProbability"
+          :speed="speed"
+          :mortality="mortality"
+          :infectedTicksDuration="infectedTicksDuration"
+          :resistantTicksDuration="resistantTicksDuration"
+          :vaccinationProbability="vaccinationProbability"
+          :vaccinatedTicksDuration="vaccinatedTicksDuration"
+          :probStillWhenSick="probStillWhenSick"
+          @update:needsReset="resetChart"
+        />
+      </div>
+      <h3 class="description">
+        Rotavirus is a highly contagious virus that primarily affects infants and young children,
+        causing severe diarrhea, vomiting, fever, and abdominal pain. Symptoms usually appear within
+        two days of infection and can lead to dehydration, which can be dangerous if not treated.
+        Vaccination is available and effective in preventing severe rotavirus infections.
+      </h3>
+    </div>
+
+    <div class="settings-chart">
+      <div class="settings">
+        <div class="settings-row">
+          <div class="settings-column">
+            <div class="settings-item">
+              <h2>Healthy</h2>
+              <InputText v-model.number="healthy" class="w-full mb-4" />
+              <Slider v-model="healthy" :max="1000" class="w-full" />
+            </div>
+
+            <div class="settings-item">
+              <h2>Speed</h2>
+              <InputText v-model.number="speed" class="w-full mb-4" />
+              <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
+            </div>
+          </div>
+
+          <div class="settings-column">
+            <div class="settings-item">
+              <h2>Infected</h2>
+              <InputText v-model.number="infected" class="w-full mb-4" />
+              <Slider v-model="infected" :max="500" class="w-full" />
+            </div>
+            <div class="settings-item">
+              <h2>Mortality Prob.</h2>
+              <InputText v-model.number="mortality" class="w-full mb-4" />
+              <Slider v-model="mortality" :step="1" :max="100" class="w-full" />
+            </div>
+          </div>
+
+          <div class="settings-column">
+            <div class="settings-item">
+              <h2>Prob. of Infection</h2>
+              <InputText v-model.number="infectionProbability" class="w-full mb-4" />
+              <Slider v-model="infectionProbability" :max="100" class="w-full" />
+            </div>
+
+            <div class="settings-item">
+              <h2>Resistant Ticks</h2>
+              <InputText v-model.number="resistantTicksDuration" class="w-full mb-4" />
+              <Slider v-model="resistantTicksDuration" :step="1" :max="1000" class="w-full" />
+            </div>
+          </div>
+
+          <div class="settings-column">
+            <div class="settings-item">
+              <h2>Infected Ticks</h2>
+              <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
+              <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
+            </div>
+            <div class="settings-item">
+              <h2>Vaccination Prob.</h2>
+              <InputText v-model.number="vaccinationProbability" class="w-full mb-4" />
+              <Slider v-model="vaccinationProbability" :step="1" :max="100" class="w-full" />
+            </div>
+          </div>
+
+          <div class="settings-column">
+            <div class="settings-item">
+              <h2>Vax Ticks Duration</h2>
+              <InputText v-model.number="vaccinatedTicksDuration" class="w-full mb-4" />
+              <Slider v-model="vaccinatedTicksDuration" :step="1" :max="1000" class="w-full" />
+            </div>
+            <div class="settings-item">
+              <h2>Immobility w/ Sick</h2>
+              <InputText v-model.number="probStillWhenSick" class="w-full mb-4" />
+              <Slider v-model="probStillWhenSick" :step="1" :max="100" class="w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart">
+        <canvas id="stats-chart"></canvas>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import RotavirusSimulation from './components/RotavirusSimulation.vue'
 import Slider from 'primevue/slider'
@@ -69,6 +179,7 @@ onMounted(() => {
       },
       options: {
         responsive: true,
+        tooltips: { enabled: false },
         scales: {
           x: {
             ticks: {
@@ -128,197 +239,70 @@ setInterval(() => {
   updateChart(chartData, currentTime)
 }, 500)
 </script>
-<template>
-  <div class="main-body">
-    <div class="row">
-      <div class="column simulation-column">
-        <RotavirusSimulation
-          class="simulation"
-          :healthy="healthy"
-          :infected="infected"
-          :infectionProbability="infectionProbability"
-          :speed="speed"
-          :mortality="mortality"
-          :infectedTicksDuration="infectedTicksDuration"
-          :resistantTicksDuration="resistantTicksDuration"
-          :vaccinationProbability="vaccinationProbability"
-          :vaccinatedTicksDuration="vaccinatedTicksDuration"
-          :probStillWhenSick="probStillWhenSick"
-          @update:needsReset="resetChart"
-        />
-        <h3 class="description">
-          Rotavirus is a highly contagious virus that primarily affects infants and young children,
-          causing severe diarrhea, vomiting, fever, and abdominal pain. Symptoms usually appear
-          within two days of infection and can lead to dehydration, which can be dangerous if not
-          treated. Vaccination is available and effective in preventing severe rotavirus infections.
-        </h3>
-      </div>
 
-      <div class="column settings-column">
-        <div class="row">
-          <div class="settings-control">
-            <h2>Healthy</h2>
-            <InputText v-model.number="healthy" class="w-full mb-4" />
-            <Slider v-model="healthy" :max="1000" class="w-full" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="settings-control">
-            <h2>Speed</h2>
-            <InputText v-model.number="speed" class="w-full mb-4" />
-            <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
-          </div>
-        </div>
-      </div>
-
-      <div class="column settings-column">
-        <div class="row">
-          <div class="settings-control">
-            <h2>Infected</h2>
-            <InputText v-model.number="infected" class="w-full mb-4" />
-            <Slider v-model="infected" :max="500" class="w-full" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="settings-control">
-            <h2>Mortality Prob.</h2>
-            <InputText v-model.number="mortality" class="w-full mb-4" />
-            <Slider v-model="mortality" :step="1" :max="100" class="w-full" />
-          </div>
-        </div>
-      </div>
-
-      <div class="column settings-column">
-        <div class="row">
-          <div class="settings-control">
-            <h2>Prob. of Infection</h2>
-            <InputText v-model.number="infectionProbability" class="w-full mb-4" />
-            <Slider v-model="infectionProbability" :max="100" class="w-full" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="settings-control">
-            <h2>Resistant Ticks</h2>
-            <InputText v-model.number="resistantTicksDuration" class="w-full mb-4" />
-            <Slider v-model="resistantTicksDuration" :step="1" :max="1000" class="w-full" />
-          </div>
-        </div>
-      </div>
-
-      <div class="column settings-column">
-        <div class="row">
-          <div class="settings-control">
-            <h2>Infected Ticks</h2>
-            <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
-            <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="settings-control">
-            <h2>Vaccination Prob.</h2>
-            <InputText v-model.number="vaccinationProbability" class="w-full mb-4" />
-            <Slider v-model="vaccinationProbability" :step="1" :max="100" class="w-full" />
-          </div>
-        </div>
-      </div>
-
-      <div class="column settings-column">
-        <div class="row">
-          <div class="settings-control">
-            <h2>Vax Ticks Duration</h2>
-            <InputText v-model.number="vaccinatedTicksDuration" class="w-full mb-4" />
-            <Slider v-model="vaccinatedTicksDuration" :step="1" :max="1000" class="w-full" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="settings-control">
-            <h2>Immobility w/ Sick</h2>
-            <InputText v-model.number="probStillWhenSick" class="w-full mb-4" />
-            <Slider v-model="probStillWhenSick" :step="1" :max="100" class="w-full" />
-          </div>
-        </div>
-      </div>
-    </div>
-    <canvas id="stats-chart"></canvas>
-  </div>
-</template>
-
-<style scoped>
-.main-body {
-  color: white;
-  min-height: 100vh;
-  padding: 2rem 2rem;
-
-  #stats-chart {
-    position: absolute;
-    right: 6rem;
-    bottom: 2rem;
-    max-height: 35rem;
-    max-width: 70rem;
-  }
-}
-
-.simulation {
-  margin-right: 23rem;
-}
-
-.description {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  max-width: 45rem;
-  margin-left: 5rem;
-  margin-bottom: 4rem;
-}
-/* Row container */
-.row {
+<style lang="scss">
+.main-container {
   display: flex;
-  align-items: flex-start;
-  gap: 2rem;
-  margin: 0 auto;
-}
-
-/* Column styling */
-.column {
-  flex: 1;
-}
-
-.settings-column {
-  flex: 1; /* Settings take less space */
-  padding-top: 2rem;
-}
-
-.settings-control {
-  min-width: 12rem;
-  margin-top: 2rem;
-}
-
-/* Input styling */
-:deep(.p-inputtext) {
+  flex-direction: row;
   width: 100%;
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-:deep(.p-slider-handle) {
-  background-color: #fff;
-}
+  height: 100%;
+  // border: 2px solid blue;
 
-/* Responsive adjustments*/
-@media (max-width: 768px) {
-  .row {
+  .simulation-description {
+    display: flex;
     flex-direction: column;
+    // border: 2px solid red;
+    flex: 1;
+
+    .simulation {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .description {
+      display: flex;
+      flex-direction: row;
+    }
   }
 
-  .column {
+  .settings-chart {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
     width: 100%;
-    margin-bottom: 1rem;
+    // border: 2px solid red;
+
+    .settings {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      .settings-row {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        gap: 10px;
+        justify-content: space-between;
+      }
+
+      .settings-column {
+        flex: 1;
+        padding: 10px;
+        box-sizing: border-box;
+
+        .settings-item {
+          margin: 15px;
+        }
+      }
+    }
+
+    .chart {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      width: 100%;
+      margin-left: 1rem;
+    }
   }
 }
 </style>

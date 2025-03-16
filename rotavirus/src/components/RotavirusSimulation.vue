@@ -1,9 +1,5 @@
 <template>
-  <div>
-    <div class="title">
-      <h2 class="">Rotavirus Simulation</h2>
-      <h3>(60 ticks = 1 second)</h3>
-    </div>
+  <div class="main-container">
     <div id="modelDiv" height="100px"></div>
   </div>
 </template>
@@ -121,8 +117,8 @@ const resetModel = () => {
   view.value = new TwoDraw(model.value, {
     div: 'modelDiv',
     patchSize: 8,
-    width: 700,
-    height: 700,
+    width: 800,
+    height: 800,
     drawOptions: {
       patchesColor: 'black',
       turtlesColor: (turtle) => {
@@ -167,17 +163,4 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="scss">
-#modelDiv {
-  position: absolute;
-  left: 0;
-  top: 0;
-  margin: 5rem;
-}
-
-.title {
-  position: absolute;
-  left: 10rem;
-  top: 1rem;
-}
-</style>
+<style scoped lang="scss"></style>
