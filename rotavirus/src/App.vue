@@ -1,32 +1,28 @@
 <template>
   <div class="main-container">
     <div class="simulation-description">
-      <div class="title">
-        <h2 class="">Rotavirus Simulation</h2>
-        <h3>(60 ticks = 1 second)</h3>
-      </div>
-      <div class="simulation">
-        <RotavirusSimulation
-          class="simulation"
-          :healthy="healthy"
-          :infected="infected"
-          :infectionProbability="infectionProbability"
-          :speed="speed"
-          :mortality="mortality"
-          :infectedTicksDuration="infectedTicksDuration"
-          :resistantTicksDuration="resistantTicksDuration"
-          :vaccinationProbability="vaccinationProbability"
-          :vaccinatedTicksDuration="vaccinatedTicksDuration"
-          :probStillWhenSick="probStillWhenSick"
-          @update:needsReset="resetChart"
-        />
-      </div>
-      <h3 class="description">
+      <h2>Rotavirus Simulation</h2>
+      <h4>(60 ticks = 1 second)</h4>
+
+      <RotavirusSimulation
+        :healthy="healthy"
+        :infected="infected"
+        :infectionProbability="infectionProbability"
+        :speed="speed"
+        :mortality="mortality"
+        :infectedTicksDuration="infectedTicksDuration"
+        :resistantTicksDuration="resistantTicksDuration"
+        :vaccinationProbability="vaccinationProbability"
+        :vaccinatedTicksDuration="vaccinatedTicksDuration"
+        :probStillWhenSick="probStillWhenSick"
+        @update:needsReset="resetChart"
+      />
+      <h4 class="description">
         Rotavirus is a highly contagious virus that primarily affects infants and young children,
         causing severe diarrhea, vomiting, fever, and abdominal pain. Symptoms usually appear within
         two days of infection and can lead to dehydration, which can be dangerous if not treated.
         Vaccination is available and effective in preventing severe rotavirus infections.
-      </h3>
+      </h4>
     </div>
 
     <div class="settings-chart">
@@ -34,13 +30,13 @@
         <div class="settings-row">
           <div class="settings-column">
             <div class="settings-item">
-              <h2>Healthy</h2>
+              <h4>Healthy</h4>
               <InputText v-model.number="healthy" class="w-full mb-4" />
               <Slider v-model="healthy" :max="1000" class="w-full" />
             </div>
 
             <div class="settings-item">
-              <h2>Speed</h2>
+              <h4>Speed</h4>
               <InputText v-model.number="speed" class="w-full mb-4" />
               <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
             </div>
@@ -48,12 +44,12 @@
 
           <div class="settings-column">
             <div class="settings-item">
-              <h2>Infected</h2>
+              <h4>Infected</h4>
               <InputText v-model.number="infected" class="w-full mb-4" />
               <Slider v-model="infected" :max="500" class="w-full" />
             </div>
             <div class="settings-item">
-              <h2>Mortality Prob.</h2>
+              <h4>Mortality Prob.</h4>
               <InputText v-model.number="mortality" class="w-full mb-4" />
               <Slider v-model="mortality" :step="1" :max="100" class="w-full" />
             </div>
@@ -61,13 +57,13 @@
 
           <div class="settings-column">
             <div class="settings-item">
-              <h2>Prob. of Infection</h2>
+              <h4>Prob. of Infection</h4>
               <InputText v-model.number="infectionProbability" class="w-full mb-4" />
               <Slider v-model="infectionProbability" :max="100" class="w-full" />
             </div>
 
             <div class="settings-item">
-              <h2>Resistant Ticks</h2>
+              <h4>Resistant Ticks</h4>
               <InputText v-model.number="resistantTicksDuration" class="w-full mb-4" />
               <Slider v-model="resistantTicksDuration" :step="1" :max="1000" class="w-full" />
             </div>
@@ -75,12 +71,12 @@
 
           <div class="settings-column">
             <div class="settings-item">
-              <h2>Infected Ticks</h2>
+              <h4>Infected Ticks</h4>
               <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
               <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
             </div>
             <div class="settings-item">
-              <h2>Vaccination Prob.</h2>
+              <h4>Vaccination Prob.</h4>
               <InputText v-model.number="vaccinationProbability" class="w-full mb-4" />
               <Slider v-model="vaccinationProbability" :step="1" :max="100" class="w-full" />
             </div>
@@ -88,12 +84,12 @@
 
           <div class="settings-column">
             <div class="settings-item">
-              <h2>Vax Ticks Duration</h2>
+              <h4>Vax Ticks Duration</h4>
               <InputText v-model.number="vaccinatedTicksDuration" class="w-full mb-4" />
               <Slider v-model="vaccinatedTicksDuration" :step="1" :max="1000" class="w-full" />
             </div>
             <div class="settings-item">
-              <h2>Immobility w/ Sick</h2>
+              <h4>Immobility w/ Sick</h4>
               <InputText v-model.number="probStillWhenSick" class="w-full mb-4" />
               <Slider v-model="probStillWhenSick" :step="1" :max="100" class="w-full" />
             </div>
@@ -101,9 +97,7 @@
         </div>
       </div>
 
-      <div class="chart">
-        <canvas id="stats-chart"></canvas>
-      </div>
+      <canvas id="stats-chart"></canvas>
     </div>
   </div>
 </template>
@@ -244,33 +238,35 @@ setInterval(() => {
 .main-container {
   display: flex;
   flex-direction: row;
-  width: 100%;
-  height: 100%;
-  // border: 2px solid blue;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
 
   .simulation-description {
     display: flex;
     flex-direction: column;
+    flex: 1; // takes up 1/3 of space
+    height: 100%;
     // border: 2px solid red;
-    flex: 1;
-
-    .simulation {
-      display: flex;
-      flex-direction: row;
-    }
+    justify-content: center;
+    align-items: center;
 
     .description {
-      display: flex;
-      flex-direction: row;
+      padding: 10px;
     }
   }
 
   .settings-chart {
     display: flex;
     flex-direction: column;
-    flex-grow: 2;
+    flex: 2; // takes up 2/3 of space
+    height: 100%;
     width: 100%;
-    // border: 2px solid red;
+    // border: 2px solid blue;
 
     .settings {
       display: flex;
@@ -286,9 +282,12 @@ setInterval(() => {
       }
 
       .settings-column {
-        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         padding: 10px;
         box-sizing: border-box;
+        // border: 2px solid red;
 
         .settings-item {
           margin: 15px;
@@ -296,12 +295,9 @@ setInterval(() => {
       }
     }
 
-    .chart {
-      display: flex;
-      flex-direction: row;
-      height: 100%;
-      width: 100%;
-      margin-left: 1rem;
+    #stats-chart {
+      max-width: 100%;
+      max-height: 29rem;
     }
   }
 }

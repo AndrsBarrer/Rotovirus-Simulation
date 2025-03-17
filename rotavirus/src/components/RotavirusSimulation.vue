@@ -1,7 +1,5 @@
 <template>
-  <div class="main-container">
-    <div id="modelDiv" height="100px"></div>
-  </div>
+  <div id="modelDiv"></div>
 </template>
 
 <script setup>
@@ -117,8 +115,8 @@ const resetModel = () => {
   view.value = new TwoDraw(model.value, {
     div: 'modelDiv',
     patchSize: 8,
-    width: 800,
-    height: 800,
+    width: 490,
+    height: 490,
     drawOptions: {
       patchesColor: 'black',
       turtlesColor: (turtle) => {
