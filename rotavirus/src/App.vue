@@ -36,30 +36,43 @@
             </div>
 
             <div class="settings-item">
-              <h4>Speed</h4>
-              <InputText v-model.number="speed" class="w-full mb-4" />
-              <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
-            </div>
-          </div>
-
-          <div class="settings-column">
-            <div class="settings-item">
               <h4>Infected</h4>
               <InputText v-model.number="infected" class="w-full mb-4" />
               <Slider v-model="infected" :max="500" class="w-full" />
             </div>
+          </div>
+
+          <div class="settings-column">
             <div class="settings-item">
-              <h4>Mortality Prob.</h4>
-              <InputText v-model.number="mortality" class="w-full mb-4" />
-              <Slider v-model="mortality" :step="1" :max="100" class="w-full" />
+              <h4>Infection Prob.</h4>
+              <InputText v-model.number="infectionProbability" class="w-full mb-4" />
+              <Slider v-model="infectionProbability" :max="100" class="w-full" />
+            </div>
+            <div class="settings-item">
+              <h4>Infected Ticks</h4>
+              <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
+              <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
             </div>
           </div>
 
           <div class="settings-column">
             <div class="settings-item">
-              <h4>Prob. of Infection</h4>
-              <InputText v-model.number="infectionProbability" class="w-full mb-4" />
-              <Slider v-model="infectionProbability" :max="100" class="w-full" />
+              <h4>Vax Prob.</h4>
+              <InputText v-model.number="vaccinationProbability" class="w-full mb-4" />
+              <Slider v-model="vaccinationProbability" :step="1" :max="100" class="w-full" />
+            </div>
+            <div class="settings-item">
+              <h4>Vax Duration</h4>
+              <InputText v-model.number="vaccinatedTicksDuration" class="w-full mb-4" />
+              <Slider v-model="vaccinatedTicksDuration" :step="1" :max="1000" class="w-full" />
+            </div>
+          </div>
+
+          <div class="settings-column">
+            <div class="settings-item">
+              <h4>Mortality Prob.</h4>
+              <InputText v-model.number="mortality" class="w-full mb-4" />
+              <Slider v-model="mortality" :step="1" :max="100" class="w-full" />
             </div>
 
             <div class="settings-item">
@@ -71,27 +84,22 @@
 
           <div class="settings-column">
             <div class="settings-item">
-              <h4>Infected Ticks</h4>
-              <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
-              <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
+              <h4>Speed</h4>
+              <InputText v-model.number="speed" class="w-full mb-4" />
+              <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
             </div>
             <div class="settings-item">
-              <h4>Vaccination Prob.</h4>
-              <InputText v-model.number="vaccinationProbability" class="w-full mb-4" />
-              <Slider v-model="vaccinationProbability" :step="1" :max="100" class="w-full" />
+              <h4>Immobility (sick)</h4>
+              <InputText v-model.number="probStillWhenSick" class="w-full mb-4" />
+              <Slider v-model="probStillWhenSick" :step="1" :max="100" class="w-full" />
             </div>
           </div>
 
           <div class="settings-column">
             <div class="settings-item">
-              <h4>Vax Ticks Duration</h4>
-              <InputText v-model.number="vaccinatedTicksDuration" class="w-full mb-4" />
-              <Slider v-model="vaccinatedTicksDuration" :step="1" :max="1000" class="w-full" />
-            </div>
-            <div class="settings-item">
-              <h4>Immobility w/ Sick</h4>
-              <InputText v-model.number="probStillWhenSick" class="w-full mb-4" />
-              <Slider v-model="probStillWhenSick" :step="1" :max="100" class="w-full" />
+              <h4>Social Influence</h4>
+              <InputText v-model.number="speed" class="w-full mb-4" />
+              <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
             </div>
           </div>
         </div>
