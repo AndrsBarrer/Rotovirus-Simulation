@@ -4,6 +4,7 @@ import { chartData } from '../components/virusChart.js'
 
 export default class RotavirusModel extends Model {
   vision = 1 // The radius of infection in patches
+  socialInfluence = 30
 
   // Temporary counter to update the values after each step
   statistics = {
@@ -128,6 +129,13 @@ export default class RotavirusModel extends Model {
         this.makeHealthy(turtle)
         this.statistics.newVaccinatedToHealthy++
       }
+
+      // If the vaccinated turtle comes across an infected turtle, it tells other nearby healthy turtles
+      // to get vaccinated. There is a probability they will listen, depending on the social influence
+      // that exists in that commmunity
+      if (this.getNearbyInfected(turtle).length > 0) {
+        this.vaccinateOthersIfNearbyVaccinated(turtle)
+      }
       turtle.vaccinatedTicksCount++
     }
 
@@ -181,6 +189,19 @@ export default class RotavirusModel extends Model {
         this.statistics.newHealthyToInfected++
       }
     }
+  }
+
+  // If a turtle is healthy and is nearby a vaccinated turtle,
+  // it might listen to the vaccinated turtles advice and decide to get vaccinated
+  vaccinateOthersIfNearbyVaccinated(turtle) {
+    const nearbyUnvaccinated = this.getNearbyHealthy(turtle)
+
+    nearbyUnvaccinated.forEach((unvaccinatedTurtle) => {
+      if (this.spinRoulette() <= this.socialInfluence) {
+        this.makeVaccinated(unvaccinatedTurtle)
+        this.statistics.newHealthyToVaccinated++
+      }
+    })
   }
 
   // Sets the state of the turtle to healthy, along with the rest of its internal variables
