@@ -298,6 +298,7 @@ setInterval(() => {
     #stats-chart {
       max-width: 100%;
       max-height: 29rem;
+      padding: 10px;
     }
   }
 }
