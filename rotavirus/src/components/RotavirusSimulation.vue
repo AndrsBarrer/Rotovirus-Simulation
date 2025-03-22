@@ -12,43 +12,36 @@ import RotavirusModel from '../agentscript-master/rotavirus.js'
 const props = defineProps({
   healthy: {
     type: Number,
-    default: 100,
   },
   infected: {
     type: Number,
-    default: 10,
   },
   infectionProbability: {
     type: Number,
-    default: 20,
   },
   speed: {
     type: Number,
-    default: 0.6,
   },
   mortality: {
     type: Number,
-    default: 10,
   },
   infectedTicksDuration: {
-    type: Number,
-    default: 300, // resistant for 5 seconds
+    type: Number, // resistant for 5 seconds
   },
   resistantTicksDuration: {
-    type: Number,
-    default: 600, // resistant for 10 seconds
+    type: Number, // resistant for 10 seconds
   },
   vaccinationProbability: {
     type: Number,
-    default: 25,
   },
   vaccinatedTicksDuration: {
     type: Number,
-    default: 180,
   },
   probStillWhenSick: {
     type: Number,
-    default: 25,
+  },
+  socialInfluence: {
+    type: Number,
   },
   chartData: {
     type: Object,
@@ -104,6 +97,7 @@ const resetModel = () => {
   model.value.vaccinationProbability = props.vaccinationProbability
   model.value.vaccinatedTicksDuration = props.vaccinatedTicksDuration
   model.value.probStillWhenSick = props.probStillWhenSick
+  model.value.socialInfluence = props.socialInfluence
 
   // Pass the chartData object to be modified and emitted back
   model.value.chartData = props.chartData

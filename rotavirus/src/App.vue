@@ -15,6 +15,7 @@
         :vaccinationProbability="vaccinationProbability"
         :vaccinatedTicksDuration="vaccinatedTicksDuration"
         :probStillWhenSick="probStillWhenSick"
+        :socialInfluence="socialInfluence"
         @update:needsReset="resetChart"
       />
       <h4 class="description">
@@ -98,8 +99,8 @@
           <div class="settings-column">
             <div class="settings-item">
               <h4>Social Influence</h4>
-              <InputText v-model.number="speed" class="w-full mb-4" />
-              <Slider v-model="speed" :step="0.1" :max="1" class="w-full" />
+              <InputText v-model.number="socialInfluence" class="w-full mb-4" />
+              <Slider v-model="socialInfluence" :step="1" :max="100" class="w-full" />
             </div>
           </div>
         </div>
@@ -119,16 +120,20 @@ import { Chart } from 'chart.js'
 
 import { chartData } from './components/virusChart.js'
 
-const healthy = ref(100)
+// Reactive variables that are passed to the simulation
+const healthy = ref(900)
 const infected = ref(10)
-const infectionProbability = ref(10)
+const infectionProbability = ref(70)
+const infectedTicksDuration = ref(400)
+const vaccinationProbability = ref(40)
+const vaccinatedTicksDuration = ref(600)
+const mortality = ref(5)
+const resistantTicksDuration = ref(900)
 const speed = ref(0.5)
-const mortality = ref(10)
-const infectedTicksDuration = ref(300)
-const resistantTicksDuration = ref(600)
-const vaccinationProbability = ref(25)
-const vaccinatedTicksDuration = ref(400)
-const probStillWhenSick = ref(20)
+const probStillWhenSick = ref(30)
+const socialInfluence = ref(60)
+
+// Used to determine if the simulation should be reset
 const needsReset = ref(false)
 
 let chart: Chart | null = null
@@ -230,7 +235,6 @@ function resetChart() {
 
 // Add a watcher for the needsReset ref
 watch(needsReset, (newValue) => {
-  console.log('needsReset changed to:', newValue) // Debug
   if (newValue === true) {
     resetChart()
   }

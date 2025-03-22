@@ -4,7 +4,6 @@ import { chartData } from '../components/virusChart.js'
 
 export default class RotavirusModel extends Model {
   vision = 1 // The radius of infection in patches
-  socialInfluence = 30
 
   // Temporary counter to update the values after each step
   statistics = {
@@ -156,6 +155,11 @@ export default class RotavirusModel extends Model {
       .map((t) => t.state)
 
     return infected
+  }
+
+  // Get all healthy turtles that are near a specific turtle
+  getNearbyHealthy(turtle) {
+    return this.turtles.inRadius(turtle, this.vision, false).filter((t) => t.state === 'healthy')
   }
 
   move(turtle) {
