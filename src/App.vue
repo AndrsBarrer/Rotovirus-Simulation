@@ -3,6 +3,8 @@
     <div class="simulation-description">
       <h2>Rotavirus Simulation</h2>
       <h4>(60 ticks = 1 second)</h4>
+      <h3>Note: This is meant to be viewed on fullscreen desktop</h3>
+      <h3>Doesn't look right on mobile (yet), working on it! ;)</h3>
 
       <RotavirusSimulation
         :healthy="healthy"
@@ -19,10 +21,12 @@
         @update:needsReset="resetChart"
       />
       <h4 class="description">
-        Rotavirus is a highly contagious virus that primarily affects infants and young children,
-        causing severe diarrhea, vomiting, fever, and abdominal pain. Symptoms usually appear within
-        two days of infection and can lead to dehydration, which can be dangerous if not treated.
-        Vaccination is available and effective in preventing severe rotavirus infections.
+        Rotavirus is a highly contagious virus that primarily affects infants
+        and young children, causing severe diarrhea, vomiting, fever, and
+        abdominal pain. Symptoms usually appear within two days of infection and
+        can lead to dehydration, which can be dangerous if not treated.
+        Vaccination is available and effective in preventing severe rotavirus
+        infections.
       </h4>
     </div>
 
@@ -46,26 +50,57 @@
           <div class="settings-column">
             <div class="settings-item">
               <h4>Infection Prob.</h4>
-              <InputText v-model.number="infectionProbability" class="w-full mb-4" />
-              <Slider v-model="infectionProbability" :max="100" class="w-full" />
+              <InputText
+                v-model.number="infectionProbability"
+                class="w-full mb-4"
+              />
+              <Slider
+                v-model="infectionProbability"
+                :max="100"
+                class="w-full"
+              />
             </div>
             <div class="settings-item">
               <h4>Infected Ticks</h4>
-              <InputText v-model.number="infectedTicksDuration" class="w-full mb-4" />
-              <Slider v-model="infectedTicksDuration" :step="1" :max="1000" class="w-full" />
+              <InputText
+                v-model.number="infectedTicksDuration"
+                class="w-full mb-4"
+              />
+              <Slider
+                v-model="infectedTicksDuration"
+                :step="1"
+                :max="1000"
+                class="w-full"
+              />
             </div>
           </div>
 
           <div class="settings-column">
             <div class="settings-item">
               <h4>Vax Prob.</h4>
-              <InputText v-model.number="vaccinationProbability" class="w-full mb-4" />
-              <Slider v-model="vaccinationProbability" :step="1" :max="100" class="w-full" />
+              <InputText
+                v-model.number="vaccinationProbability"
+                class="w-full mb-4"
+              />
+              <Slider
+                v-model="vaccinationProbability"
+                :step="1"
+                :max="100"
+                class="w-full"
+              />
             </div>
             <div class="settings-item">
               <h4>Vax Duration</h4>
-              <InputText v-model.number="vaccinatedTicksDuration" class="w-full mb-4" />
-              <Slider v-model="vaccinatedTicksDuration" :step="1" :max="1000" class="w-full" />
+              <InputText
+                v-model.number="vaccinatedTicksDuration"
+                class="w-full mb-4"
+              />
+              <Slider
+                v-model="vaccinatedTicksDuration"
+                :step="1"
+                :max="1000"
+                class="w-full"
+              />
             </div>
           </div>
 
@@ -78,8 +113,16 @@
 
             <div class="settings-item">
               <h4>Resistant Ticks</h4>
-              <InputText v-model.number="resistantTicksDuration" class="w-full mb-4" />
-              <Slider v-model="resistantTicksDuration" :step="1" :max="1000" class="w-full" />
+              <InputText
+                v-model.number="resistantTicksDuration"
+                class="w-full mb-4"
+              />
+              <Slider
+                v-model="resistantTicksDuration"
+                :step="1"
+                :max="1000"
+                class="w-full"
+              />
             </div>
           </div>
 
@@ -91,8 +134,16 @@
             </div>
             <div class="settings-item">
               <h4>Immobility (sick)</h4>
-              <InputText v-model.number="probStillWhenSick" class="w-full mb-4" />
-              <Slider v-model="probStillWhenSick" :step="1" :max="100" class="w-full" />
+              <InputText
+                v-model.number="probStillWhenSick"
+                class="w-full mb-4"
+              />
+              <Slider
+                v-model="probStillWhenSick"
+                :step="1"
+                :max="100"
+                class="w-full"
+              />
             </div>
           </div>
 
@@ -100,7 +151,12 @@
             <div class="settings-item">
               <h4>Social Influence</h4>
               <InputText v-model.number="socialInfluence" class="w-full mb-4" />
-              <Slider v-model="socialInfluence" :step="1" :max="100" class="w-full" />
+              <Slider
+                v-model="socialInfluence"
+                :step="1"
+                :max="100"
+                class="w-full"
+              />
             </div>
           </div>
         </div>
@@ -112,74 +168,74 @@
 </template>
 
 <script setup lang="ts">
-import RotavirusSimulation from './components/RotavirusSimulation.vue'
-import Slider from 'primevue/slider'
-import InputText from 'primevue/inputtext'
-import { ref, onMounted, watch } from 'vue'
-import { Chart } from 'chart.js'
+import RotavirusSimulation from "./components/RotavirusSimulation.vue";
+import Slider from "primevue/slider";
+import InputText from "primevue/inputtext";
+import { ref, onMounted, watch } from "vue";
+import { Chart } from "chart.js";
 
-import { chartData } from './components/virusChart.js'
+import { chartData } from "./components/virusChart.js";
 
 // Reactive variables that are passed to the simulation
-const healthy = ref(900)
-const infected = ref(10)
-const infectionProbability = ref(70)
-const infectedTicksDuration = ref(400)
-const vaccinationProbability = ref(40)
-const vaccinatedTicksDuration = ref(600)
-const mortality = ref(5)
-const resistantTicksDuration = ref(900)
-const speed = ref(0.5)
-const probStillWhenSick = ref(30)
-const socialInfluence = ref(60)
+const healthy = ref(900);
+const infected = ref(10);
+const infectionProbability = ref(70);
+const infectedTicksDuration = ref(400);
+const vaccinationProbability = ref(40);
+const vaccinatedTicksDuration = ref(600);
+const mortality = ref(5);
+const resistantTicksDuration = ref(900);
+const speed = ref(0.5);
+const probStillWhenSick = ref(30);
+const socialInfluence = ref(60);
 
 // Used to determine if the simulation should be reset
-const needsReset = ref(false)
+const needsReset = ref(false);
 
-let chart: Chart | null = null
+let chart: Chart | null = null;
 
 onMounted(() => {
   // Ensure the canvas element exists after the component is mounted
-  const ctx = document.getElementById('stats-chart')
+  const ctx = document.getElementById("stats-chart");
   if (ctx) {
     chart = new Chart(ctx, {
-      type: 'line',
+      type: "line",
       data: {
         datasets: [
           {
-            label: 'Population',
+            label: "Population",
             data: [], // This will store historical values
-            borderColor: 'green',
+            borderColor: "green",
             fill: false,
           },
           {
-            label: 'Healthy',
+            label: "Healthy",
             data: [], // This will store historical values
-            borderColor: 'blue',
+            borderColor: "blue",
             fill: false,
           },
           {
-            label: 'Infected',
+            label: "Infected",
             data: [], // This will store historical values
-            borderColor: 'red',
+            borderColor: "red",
             fill: false,
           },
           {
-            label: 'Resistant',
+            label: "Resistant",
             data: [], // This will store historical values
-            borderColor: 'white',
+            borderColor: "white",
             fill: false,
           },
           {
-            label: 'Vaccinated',
+            label: "Vaccinated",
             data: [], // This will store historical values
-            borderColor: 'Yellow',
+            borderColor: "Yellow",
             fill: false,
           },
           {
-            label: 'Deaths',
+            label: "Deaths",
             data: [], // This will store historical values
-            borderColor: 'Black',
+            borderColor: "Black",
             fill: false,
           },
         ],
@@ -196,54 +252,54 @@ onMounted(() => {
           y: {
             title: {
               display: true,
-              text: 'Population',
+              text: "Population",
             },
           },
         },
       },
-    })
-    ctx.style.backgroundColor = 'rgba(160,160,160,0.1)'
+    });
+    ctx.style.backgroundColor = "rgba(160,160,160,0.1)";
   }
-})
+});
 
 // Function to update the chart with a new healthy value
 function updateChart(newChartData, time) {
-  chart.data.labels.push(time) // Add new time label
-  chart.data.datasets[0].data.push(newChartData.population)
-  chart.data.datasets[1].data.push(newChartData.healthy)
-  chart.data.datasets[2].data.push(newChartData.infected)
-  chart.data.datasets[3].data.push(newChartData.resistant)
-  chart.data.datasets[4].data.push(newChartData.vaccinated)
-  chart.data.datasets[5].data.push(newChartData.deaths)
-  chart.update() // Refresh the chart
+  chart.data.labels.push(time); // Add new time label
+  chart.data.datasets[0].data.push(newChartData.population);
+  chart.data.datasets[1].data.push(newChartData.healthy);
+  chart.data.datasets[2].data.push(newChartData.infected);
+  chart.data.datasets[3].data.push(newChartData.resistant);
+  chart.data.datasets[4].data.push(newChartData.vaccinated);
+  chart.data.datasets[5].data.push(newChartData.deaths);
+  chart.update(); // Refresh the chart
 }
 
 // Add this function to reset the chart
 function resetChart() {
   if (chart) {
     // Clear all datasets
-    chart.data.labels = []
+    chart.data.labels = [];
     chart.data.datasets.forEach((dataset) => {
-      dataset.data = []
-    })
-    chart.update()
+      dataset.data = [];
+    });
+    chart.update();
 
     // Reset the needsReset flag
-    needsReset.value = false
+    needsReset.value = false;
   }
 }
 
 // Add a watcher for the needsReset ref
 watch(needsReset, (newValue) => {
   if (newValue === true) {
-    resetChart()
+    resetChart();
   }
-})
+});
 
 setInterval(() => {
-  const currentTime = new Date().toLocaleTimeString()
-  updateChart(chartData, currentTime)
-}, 500)
+  const currentTime = new Date().toLocaleTimeString();
+  updateChart(chartData, currentTime);
+}, 500);
 </script>
 
 <style lang="scss">
